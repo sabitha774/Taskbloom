@@ -1,0 +1,1562 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TaskBloom | Login and Smart To-Do List</title>
+  <style>
+
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap');
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #f7f2ff, #eef7ff, #fff3f6);
+      color: #292442;
+      min-height: 100vh;
+    }
+    #authView {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 16px;
+    }
+    #appView { display: none; }
+
+    .auth-container {
+      width: 100%;
+      max-width: 440px;
+      margin: auto;
+    }
+
+    .brand {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    .logo-icon {
+      background: linear-gradient(135deg, #8758ed, #ed73b7);
+      color: white;
+      width: 54px;
+      height: 54px;
+      border-radius: 17px;
+      display: grid;
+      place-items: center;
+      font-size: 28px;
+      box-shadow: 0 10px 22px #ad8be755;
+      margin-bottom: 12px;
+    }
+
+    .brand h1 {
+      font-size: 26px;
+      font-weight: 800;
+      color: #292442;
+    }
+
+    .brand p {
+      color: #89849e;
+      font-size: 13px;
+      margin-top: 2px;
+    }
+
+    .auth-card {
+      background: white;
+      border-radius: 24px;
+      padding: 32px 28px;
+      box-shadow: 0 12px 36px #55408012;
+      border: 1px solid #f1edfa;
+    }
+
+    /* Tabs */
+    .tab-nav {
+      display: flex;
+      background: #f4f0fb;
+      padding: 5px;
+      border-radius: 14px;
+      margin-bottom: 24px;
+      gap: 6px;
+    }
+
+    .tab-btn {
+      flex: 1;
+      padding: 10px;
+      border: none;
+      background: transparent;
+      border-radius: 10px;
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 600;
+      color: #867e9c;
+      cursor: pointer;
+      transition: all 0.25s ease;
+    }
+
+    .tab-btn.active {
+      background: white;
+      color: #8056e9;
+      box-shadow: 0 4px 12px #55408010;
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+      position: relative;
+    }
+
+    label {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      margin-bottom: 7px;
+      color: #615a79;
+    }
+
+    .input-wrapper {
+      position: relative;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="password"] {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1px solid #e9e4f2;
+      border-radius: 12px;
+      font-family: inherit;
+      font-size: 13px;
+      color: #302a48;
+      outline: none;
+      background: #fcfbff;
+      transition: all 0.2s ease;
+    }
+
+    .input-wrapper input {
+      padding-right: 42px;
+    }
+
+    input:focus {
+      border-color: #a17be9;
+      box-shadow: 0 0 0 3px #a17be91c;
+      background: white;
+    }
+
+    .toggle-pw {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 14px;
+      color: #928ba4;
+      padding: 4px;
+    }
+
+    .row-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      font-size: 12px;
+      color: #89849e;
+    }
+
+    .remember-me {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+    }
+
+    .remember-me input {
+      accent-color: #8056e9;
+      cursor: pointer;
+    }
+
+    .forgot-link {
+      color: #8056e9;
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+
+    .forgot-link:hover {
+      text-decoration: underline;
+    }
+
+    .submit-btn {
+      width: 100%;
+      padding: 13px;
+      border: none;
+      border-radius: 12px;
+      background: linear-gradient(100deg, #8056e9, #e875b5);
+      color: white;
+      font-family: inherit;
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 6px 18px #a17be940;
+    }
+
+    .submit-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 9px 22px #a17be955;
+    }
+
+    .divider {
+      display: flex;
+      align-items: center;
+      text-align: center;
+      margin: 20px 0;
+      color: #b3acc3;
+      font-size: 12px;
+    }
+
+    .divider::before,
+    .divider::after {
+      content: '';
+      flex: 1;
+      border-bottom: 1px solid #eeeaf5;
+    }
+
+    .divider span {
+      padding: 0 10px;
+    }
+
+    .guest-btn {
+      width: 100%;
+      padding: 11px;
+      border: 1px solid #e9e4f2;
+      background: white;
+      border-radius: 12px;
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 600;
+      color: #615a79;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .guest-btn:hover {
+      background: #fcfbff;
+      border-color: #c9bfdf;
+      color: #8056e9;
+    }
+
+    .auth-form {
+      display: none;
+    }
+
+    .auth-form.active {
+      display: block;
+      animation: fadeIn 0.25s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 25px;
+      right: 25px;
+      background: #292442;
+      color: white;
+      padding: 13px 20px;
+      border-radius: 12px;
+      font-size: 13px;
+      opacity: 0;
+      transform: translateY(15px);
+      transition: 0.3s;
+      pointer-events: none;
+      z-index: 10;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 24px;
+      color: #a09aaf;
+      font-size: 12px;
+    }
+
+    footer a {
+      color: #8056e9;
+      text-decoration: none;
+      font-weight: 600;
+    }
+  
+
+
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap');
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #f7f2ff, #eef7ff, #fff3f6);
+      color: #292442;
+      min-height: 100vh;
+      padding: 30px 16px;
+    }
+
+    .container {
+      max-width: 1150px;
+      margin: auto;
+    }
+
+    /* Header */
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 30px;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo-icon {
+      background: linear-gradient(135deg, #8758ed, #ed73b7);
+      color: white;
+      width: 48px;
+      height: 48px;
+      border-radius: 15px;
+      display: grid;
+      place-items: center;
+      font-size: 25px;
+      box-shadow: 0 7px 18px #ad8be755;
+    }
+
+    .logo h1 {
+      font-size: 23px;
+      font-weight: 800;
+    }
+
+    .logo p {
+      color: #89849e;
+      font-size: 12px;
+    }
+
+    .date-display {
+      background: white;
+      padding: 11px 17px;
+      border-radius: 14px;
+      color: #766d91;
+      font-size: 13px;
+      box-shadow: 0 5px 20px #5540800c;
+    }
+
+    /* Welcome section */
+    .welcome {
+      background: linear-gradient(110deg, #8056e9, #a56be9, #ed7cb6);
+      color: white;
+      padding: 30px;
+      border-radius: 24px;
+      margin-bottom: 25px;
+      box-shadow: 0 12px 30px #a17be633;
+    }
+
+    .welcome h2 {
+      font-size: 27px;
+      margin-bottom: 7px;
+    }
+
+    .welcome p {
+      font-size: 14px;
+      opacity: .9;
+    }
+
+    /* Statistics */
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 25px;
+    }
+
+    .stat-card {
+      background: white;
+      padding: 20px;
+      border-radius: 19px;
+      box-shadow: 0 5px 22px #5540800b;
+    }
+
+    .stat-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 13px;
+      display: grid;
+      place-items: center;
+      font-size: 20px;
+      margin-bottom: 12px;
+    }
+
+    .purple { background: #eee7ff; }
+    .pink { background: #ffe5f0; }
+    .blue { background: #e3f2ff; }
+    .green { background: #e0f8eb; }
+
+    .stat-card h3 {
+      font-size: 25px;
+    }
+
+    .stat-card p {
+      color: #928ba4;
+      font-size: 12px;
+    }
+
+    /* Main layout */
+    .main-layout {
+      display: grid;
+      grid-template-columns: 350px 1fr;
+      gap: 22px;
+      align-items: start;
+    }
+
+    .panel {
+      background: white;
+      padding: 23px;
+      border-radius: 21px;
+      box-shadow: 0 5px 22px #5540800b;
+    }
+
+    .panel h2 {
+      font-size: 18px;
+      margin-bottom: 18px;
+    }
+
+    /* Task form */
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    label {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      margin-bottom: 7px;
+      color: #615a79;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #e9e4f2;
+      border-radius: 11px;
+      font-family: inherit;
+      font-size: 13px;
+      color: #302a48;
+      outline: none;
+      background: #fcfbff;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      border-color: #a17be9;
+      box-shadow: 0 0 0 3px #a17be91c;
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 75px;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .add-btn {
+      width: 100%;
+      padding: 13px;
+      border: none;
+      border-radius: 12px;
+      background: linear-gradient(100deg, #8056e9, #e875b5);
+      color: white;
+      font-family: inherit;
+      font-weight: 600;
+      cursor: pointer;
+      transition: .2s;
+    }
+
+    .add-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 7px 16px #a17be955;
+    }
+
+    .cancel-btn {
+      width: 100%;
+      margin-top: 8px;
+      padding: 10px;
+      border: 1px solid #e9e4f2;
+      background: white;
+      border-radius: 10px;
+      font-family: inherit;
+      cursor: pointer;
+      display: none;
+    }
+
+    /* Task list */
+    .task-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 17px;
+    }
+
+    .task-header h2 {
+      margin: 0;
+    }
+
+    .clear-btn {
+      border: none;
+      background: #fff0f4;
+      color: #db5485;
+      border-radius: 9px;
+      padding: 9px 12px;
+      font-family: inherit;
+      font-size: 11px;
+      cursor: pointer;
+    }
+
+    .search-box {
+      margin-bottom: 15px;
+    }
+
+    .filters {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 18px;
+    }
+
+    .filter-btn {
+      border: none;
+      padding: 8px 13px;
+      border-radius: 9px;
+      background: #f3f0fa;
+      color: #817995;
+      font-family: inherit;
+      font-size: 11px;
+      cursor: pointer;
+    }
+
+    .filter-btn.active {
+      background: #8056e9;
+      color: white;
+    }
+
+    .task-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .task-card {
+      border: 1px solid #eeeaf5;
+      border-left: 4px solid #a17be9;
+      border-radius: 14px;
+      padding: 15px;
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      transition: .2s;
+    }
+
+    .task-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 17px #55408012;
+    }
+
+    .task-card.completed {
+      opacity: .65;
+      border-left-color: #43c78b;
+    }
+
+    .task-card.completed .task-title {
+      text-decoration: line-through;
+      color: #999;
+    }
+
+    .task-check {
+      width: 19px;
+      height: 19px;
+      margin-top: 3px;
+      accent-color: #8056e9;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .task-content {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .task-title {
+      font-size: 14px;
+      font-weight: 600;
+      overflow-wrap: anywhere;
+    }
+
+    .task-description {
+      font-size: 11px;
+      color: #9992a9;
+      margin-top: 5px;
+      overflow-wrap: anywhere;
+    }
+
+    .task-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      margin-top: 10px;
+    }
+
+    .tag {
+      font-size: 10px;
+      padding: 5px 8px;
+      border-radius: 7px;
+      background: #f2edff;
+      color: #8056e9;
+    }
+
+    .priority-high {
+      background: #ffe5e9;
+      color: #df5470;
+    }
+
+    .priority-medium {
+      background: #fff1d9;
+      color: #c58a27;
+    }
+
+    .priority-low {
+      background: #e3f8ec;
+      color: #299b65;
+    }
+
+    .overdue {
+      background: #ffe5e9;
+      color: #df5470;
+    }
+
+    .task-actions {
+      display: flex;
+      gap: 6px;
+    }
+
+    .action-btn {
+      border: none;
+      background: #f4f1fa;
+      width: 30px;
+      height: 30px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 13px;
+    }
+
+    .action-btn:hover {
+      background: #e9e1fa;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 40px 10px;
+      color: #9992a9;
+    }
+
+    .empty-state div {
+      font-size: 38px;
+      margin-bottom: 10px;
+    }
+
+    .empty-state p {
+      font-size: 13px;
+    }
+
+    /* Progress */
+    .progress-section {
+      margin-top: 20px;
+      padding: 18px;
+      border-radius: 15px;
+      background: #f8f5ff;
+    }
+
+    .progress-top {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      margin-bottom: 10px;
+    }
+
+    .progress-bar {
+      height: 9px;
+      background: #e8e0f8;
+      border-radius: 20px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #8056e9, #ed73b7);
+      border-radius: 20px;
+      transition: width .3s;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 25px;
+      right: 25px;
+      background: #292442;
+      color: white;
+      padding: 13px 20px;
+      border-radius: 12px;
+      font-size: 13px;
+      opacity: 0;
+      transform: translateY(15px);
+      transition: .3s;
+      pointer-events: none;
+      z-index: 10;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 30px;
+      color: #a09aaf;
+      font-size: 11px;
+    }
+
+    /* Mobile responsive */
+    @media (max-width: 800px) {
+      .main-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .stats {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 480px) {
+      body { padding: 18px 12px; }
+      .logo h1 { font-size: 18px; }
+      .date-display { font-size: 10px; padding: 9px; }
+      .welcome { padding: 23px; }
+      .welcome h2 { font-size: 22px; }
+      .panel { padding: 17px; }
+      .form-row { grid-template-columns: 1fr; gap: 0; }
+      .task-card { padding: 12px; }
+    }
+  
+    #authView .auth-container { width: 100%; max-width: 440px; }
+    #appView { padding: 30px 16px; }
+    @media (max-width: 480px) { #appView { padding: 18px 12px; } }
+  </style>
+</head>
+<body>
+  <section id="authView" style="display:flex;">
+    
+
+  <div class="auth-container">
+    <div class="brand">
+      <div class="logo-icon">✓</div>
+      <h1>TaskBloom</h1>
+      <p>Sign in to sync & organize your productivity</p>
+    </div>
+
+    <div class="auth-card">
+      <!-- Tabs -->
+      <div class="tab-nav">
+        <button type="button" class="tab-btn active" id="tabSignInBtn" onclick="switchTab('signin')">Sign In</button>
+        <button type="button" class="tab-btn" id="tabSignUpBtn" onclick="switchTab('signup')">Create Account</button>
+      </div>
+
+      <!-- SIGN IN FORM -->
+      <form id="signInForm" class="auth-form active" onsubmit="handleSignIn(event)">
+        <div class="form-group">
+          <label for="signInEmail">Email Address</label>
+          <input type="email" id="signInEmail" placeholder="you@example.com" required autocomplete="email">
+        </div>
+
+        <div class="form-group">
+          <label for="signInPassword">Password</label>
+          <div class="input-wrapper">
+            <input type="password" id="signInPassword" placeholder="Enter your password" required autocomplete="current-password">
+            <button type="button" class="toggle-pw" onclick="togglePasswordVisibility('signInPassword', this)" aria-label="Toggle password">👁️</button>
+          </div>
+        </div>
+
+        <div class="row-meta">
+          <label class="remember-me">
+            <input type="checkbox" id="rememberMe"> Remember me
+          </label>
+          <a href="#" class="forgot-link" onclick="handleForgotPassword(event)">Forgot?</a>
+        </div>
+
+        <button type="submit" class="submit-btn">Sign In to TaskBloom</button>
+
+        <div class="divider">
+          <span>OR</span>
+        </div>
+
+        <button type="button" class="guest-btn" onclick="continueAsGuest()">
+          ✨ Continue as Guest
+        </button>
+      </form>
+
+      <!-- SIGN UP FORM -->
+      <form id="signUpForm" class="auth-form" onsubmit="handleSignUp(event)">
+        <div class="form-group">
+          <label for="signUpName">Full Name</label>
+          <input type="text" id="signUpName" placeholder="e.g. Alex Morgan" required autocomplete="name">
+        </div>
+
+        <div class="form-group">
+          <label for="signUpEmail">Email Address</label>
+          <input type="email" id="signUpEmail" placeholder="you@example.com" required autocomplete="email">
+        </div>
+
+        <div class="form-group">
+          <label for="signUpPassword">Password</label>
+          <div class="input-wrapper">
+            <input type="password" id="signUpPassword" placeholder="Minimum 6 characters" minlength="6" required autocomplete="new-password">
+            <button type="button" class="toggle-pw" onclick="togglePasswordVisibility('signUpPassword', this)" aria-label="Toggle password">👁️</button>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="signUpConfirmPassword">Confirm Password</label>
+          <div class="input-wrapper">
+            <input type="password" id="signUpConfirmPassword" placeholder="Repeat your password" minlength="6" required autocomplete="new-password">
+            <button type="button" class="toggle-pw" onclick="togglePasswordVisibility('signUpConfirmPassword', this)" aria-label="Toggle password">👁️</button>
+          </div>
+        </div>
+
+        <button type="submit" class="submit-btn" style="margin-top: 10px;">Create Account</button>
+      </form>
+    </div>
+
+    <footer>
+      Need help? <a href="#" onclick="event.preventDefault(); continueAsGuest();">Continue as Guest</a>
+    </footer>
+  </div>
+
+  </section>
+  <section id="appView">
+    
+  <div class="container">
+
+    <!-- HEADER -->
+    <header>
+      <div class="logo">
+        <div class="logo-icon">✓</div>
+        <div>
+          <h1>TaskBloom</h1>
+          <p>Your smart productivity space</p>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:flex-end;">
+        <div class="date-display" id="todayDate"></div>
+        <span class="date-display" id="signedInAs">Hello!</span>
+        <button type="button" class="clear-btn" onclick="logOut()">Log Out</button>
+      </div>
+    </header>
+
+    <!-- WELCOME -->
+    <section class="welcome">
+      <h2>Make today count! ✨</h2>
+      <p>Organize your tasks, stay focused and achieve your goals.</p>
+    </section>
+
+    <!-- STATISTICS -->
+    <section class="stats">
+      <div class="stat-card">
+        <div class="stat-icon purple">📋</div>
+        <h3 id="totalTasks">0</h3>
+        <p>Total Tasks</p>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon pink">⏳</div>
+        <h3 id="pendingTasks">0</h3>
+        <p>Pending Tasks</p>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon green">✅</div>
+        <h3 id="completedTasks">0</h3>
+        <p>Completed Tasks</p>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon blue">📅</div>
+        <h3 id="todayTasks">0</h3>
+        <p>Due Today</p>
+      </div>
+    </section>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-layout">
+
+      <!-- ADD TASK FORM -->
+      <section class="panel">
+        <h2 id="formHeading">➕ Create New Task</h2>
+
+        <form id="taskForm">
+          <div class="form-group">
+            <label for="taskTitle">Task Title *</label>
+            <input
+              type="text"
+              id="taskTitle"
+              placeholder="What do you need to do?"
+              maxlength="80"
+              required
+            >
+          </div>
+
+          <div class="form-group">
+            <label for="taskDescription">Description</label>
+            <textarea
+              id="taskDescription"
+              placeholder="Add some details..."
+              maxlength="250"
+            ></textarea>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="taskCategory">Category</label>
+              <select id="taskCategory">
+                <option>Personal</option>
+                <option>Study</option>
+                <option>Work</option>
+                <option>Health</option>
+                <option>Other</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="taskPriority">Priority</label>
+              <select id="taskPriority">
+                <option value="Low">Low</option>
+                <option value="Medium" selected>Medium</option>
+                <option value="High">High</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="taskDate">Due Date</label>
+            <input type="date" id="taskDate">
+          </div>
+
+          <button type="submit" class="add-btn" id="submitBtn">
+            + Add Task
+          </button>
+
+          <button type="button" class="cancel-btn" id="cancelBtn">
+            Cancel Editing
+          </button>
+        </form>
+      </section>
+
+      <!-- TASK DISPLAY -->
+      <section class="panel">
+        <div class="task-header">
+          <h2>📝 My Tasks</h2>
+          <button class="clear-btn" id="clearCompleted">
+            Clear Completed
+          </button>
+        </div>
+
+        <div class="search-box">
+          <input
+            type="search"
+            id="searchInput"
+            placeholder="🔍 Search your tasks..."
+          >
+        </div>
+
+        <div class="filters">
+          <button class="filter-btn active" data-filter="all">All</button>
+          <button class="filter-btn" data-filter="today">Today</button>
+          <button class="filter-btn" data-filter="pending">Pending</button>
+          <button class="filter-btn" data-filter="completed">Completed</button>
+        </div>
+
+        <div class="task-list" id="taskList"></div>
+
+        <!-- PROGRESS -->
+        <div class="progress-section">
+          <div class="progress-top">
+            <strong>Daily Progress</strong>
+            <strong id="progressText">0%</strong>
+          </div>
+          <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <footer>
+      Made with 💜 | TaskBloom Smart To-Do List
+    </footer>
+
+  </div>
+
+  </section>
+  <div class="toast" id="toast"></div>
+  <script>
+    // Toast notification helper
+    function showToast(message) {
+      const toast = document.getElementById("toast");
+      if (!toast) return;
+      toast.textContent = message;
+      toast.classList.add("show");
+      setTimeout(() => {
+        toast.classList.remove("show");
+      }, 2400);
+    }
+
+    // Switch between Sign In and Sign Up tabs
+    function switchTab(mode) {
+      const signInForm = document.getElementById("signInForm");
+      const signUpForm = document.getElementById("signUpForm");
+      const tabSignInBtn = document.getElementById("tabSignInBtn");
+      const tabSignUpBtn = document.getElementById("tabSignUpBtn");
+
+      if (mode === 'signin') {
+        signInForm.classList.add("active");
+        signUpForm.classList.remove("active");
+        tabSignInBtn.classList.add("active");
+        tabSignUpBtn.classList.remove("active");
+      } else {
+        signInForm.classList.remove("active");
+        signUpForm.classList.add("active");
+        tabSignInBtn.classList.remove("active");
+        tabSignUpBtn.classList.add("active");
+      }
+    }
+
+    // Show/hide password toggle
+    function togglePasswordVisibility(inputId, btn) {
+      const input = document.getElementById(inputId);
+      if (input.type === "password") {
+        input.type = "text";
+        btn.textContent = "🙈";
+      } else {
+        input.type = "password";
+        btn.textContent = "👁️";
+      }
+    }
+
+    // Get stored users from localStorage
+    function getUsers() {
+      return JSON.parse(localStorage.getItem("taskBloomUsers")) || [];
+    }
+
+    // Save users list to localStorage
+    function saveUsers(users) {
+      localStorage.setItem("taskBloomUsers", JSON.stringify(users));
+    }
+
+    // Set currently active session
+    function setSession(user) {
+      localStorage.setItem("taskBloomCurrentUser", JSON.stringify(user));
+    }
+
+    // Handle account creation
+    function handleSignUp(event) {
+      event.preventDefault();
+      const name = document.getElementById("signUpName").value.trim();
+      const email = document.getElementById("signUpEmail").value.trim().toLowerCase();
+      const password = document.getElementById("signUpPassword").value;
+      const confirmPassword = document.getElementById("signUpConfirmPassword").value;
+
+      if (password !== confirmPassword) {
+        showToast("Passwords do not match!");
+        return;
+      }
+
+      const users = getUsers();
+      const existingUser = users.find(u => u.email === email);
+
+      if (existingUser) {
+        showToast("An account with this email already exists!");
+        return;
+      }
+
+      const newUser = {
+        id: "user_" + Date.now(),
+        name: name,
+        email: email,
+        password: password,
+        createdAt: new Date().toISOString()
+      };
+
+      users.push(newUser);
+      saveUsers(users);
+
+      // Auto login after sign up
+      setSession({
+        id: newUser.id,
+        name: newUser.name,
+        email: newUser.email,
+        isGuest: false
+      });
+
+      showToast("Account created! Redirecting... ✨");
+      setTimeout(() => {
+        showApp();
+      }, 1000);
+    }
+
+    // Handle user sign in
+    function handleSignIn(event) {
+      event.preventDefault();
+      const email = document.getElementById("signInEmail").value.trim().toLowerCase();
+      const password = document.getElementById("signInPassword").value;
+
+      const users = getUsers();
+      const user = users.find(u => u.email === email && u.password === password);
+
+      if (!user) {
+        showToast("Invalid email or password!");
+        return;
+      }
+
+      setSession({
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        isGuest: false
+      });
+
+      showToast(`Welcome back, ${user.name}! 👋`);
+      setTimeout(() => {
+        showApp();
+      }, 800);
+    }
+
+    // Continue as guest without account
+    function continueAsGuest() {
+      setSession({
+        id: "guest",
+        name: "Guest Explorer",
+        email: "guest@taskbloom.app",
+        isGuest: true
+      });
+      showToast("Continuing as Guest... 🚀");
+      setTimeout(() => {
+        showApp();
+      }, 600);
+    }
+
+    // Password reset reminder
+    function handleForgotPassword(e) {
+      e.preventDefault();
+      showToast("Password reset: Enter your registered email or create a new account.");
+    }
+
+    // Prefill email if previously logged in
+    window.addEventListener("DOMContentLoaded", () => {
+      const currentUser = JSON.parse(localStorage.getItem("taskBloomCurrentUser") || "null");
+      if (currentUser) showApp();
+    });
+  
+
+    function getCurrentUser() {
+      return JSON.parse(localStorage.getItem("taskBloomCurrentUser") || "null");
+    }
+
+    function getTaskStorageKey() {
+      const user = getCurrentUser();
+      return "taskBloomTasks_" + (user ? user.id : "guest");
+    }
+
+    function showApp() {
+      const user = getCurrentUser();
+      if (!user) return;
+      document.getElementById("authView").style.display = "none";
+      document.getElementById("appView").style.display = "block";
+      document.body.style.padding = "0";
+      document.getElementById("signedInAs").textContent = "Hello, " + (user.name || "Guest") + "!";
+      tasks = JSON.parse(localStorage.getItem(getTaskStorageKey()) || "[]");
+      renderTasks();
+    }
+
+    function logOut() {
+      localStorage.removeItem("taskBloomCurrentUser");
+      document.getElementById("appView").style.display = "none";
+      document.getElementById("authView").style.display = "flex";
+      document.body.style.padding = "0";
+      switchTab("signin");
+      showToast("You have logged out.");
+    }
+
+
+    // 1. GET HTML ELEMENTS
+    const taskForm = document.getElementById("taskForm");
+    const taskList = document.getElementById("taskList");
+    const searchInput = document.getElementById("searchInput");
+
+    const taskTitle = document.getElementById("taskTitle");
+    const taskDescription = document.getElementById("taskDescription");
+    const taskCategory = document.getElementById("taskCategory");
+    const taskPriority = document.getElementById("taskPriority");
+    const taskDate = document.getElementById("taskDate");
+
+    const submitBtn = document.getElementById("submitBtn");
+    const cancelBtn = document.getElementById("cancelBtn");
+    const formHeading = document.getElementById("formHeading");
+
+    // 2. LOAD TASKS FROM LOCAL STORAGE
+    let tasks = [];
+    let currentFilter = "all";
+    let editingId = null;
+
+    // 3. GET TODAY'S DATE
+    function getToday() {
+      const now = new Date();
+      const year = now.getFullYear();
+      const month = String(now.getMonth() + 1).padStart(2, "0");
+      const day = String(now.getDate()).padStart(2, "0");
+      return `${year}-${month}-${day}`;
+    }
+
+    document.getElementById("todayDate").textContent =
+      new Date().toLocaleDateString("en-IN", {
+        weekday: "short",
+        day: "numeric",
+        month: "short",
+        year: "numeric"
+      });
+
+    // 4. SAVE TASKS
+    function saveTasks() {
+      localStorage.setItem(getTaskStorageKey(), JSON.stringify(tasks));
+    }
+
+    // 5. SHOW NOTIFICATION
+    function showToast(message) {
+      const toast = document.getElementById("toast");
+      toast.textContent = message;
+      toast.classList.add("show");
+
+      setTimeout(() => {
+        toast.classList.remove("show");
+      }, 2200);
+    }
+
+    // 6. ADD OR UPDATE TASK
+    taskForm.addEventListener("submit", function(event) {
+      event.preventDefault();
+
+      const title = taskTitle.value.trim();
+
+      if (!title) {
+        showToast("Please enter a task title.");
+        return;
+      }
+
+      if (editingId !== null) {
+        const task = tasks.find(t => t.id === editingId);
+
+        if (task) {
+          task.title = title;
+          task.description = taskDescription.value.trim();
+          task.category = taskCategory.value;
+          task.priority = taskPriority.value;
+          task.date = taskDate.value;
+        }
+
+        showToast("Task updated successfully! ✨");
+      } else {
+        const newTask = {
+          id: Date.now(),
+          title: title,
+          description: taskDescription.value.trim(),
+          category: taskCategory.value,
+          priority: taskPriority.value,
+          date: taskDate.value,
+          completed: false
+        };
+
+        tasks.unshift(newTask);
+        showToast("New task added! 🎉");
+      }
+
+      saveTasks();
+      renderTasks();
+      resetForm();
+    });
+
+    // 7. RESET FORM
+    function resetForm() {
+      taskForm.reset();
+      editingId = null;
+      formHeading.textContent = "➕ Create New Task";
+      submitBtn.textContent = "+ Add Task";
+      cancelBtn.style.display = "none";
+    }
+
+    cancelBtn.addEventListener("click", resetForm);
+
+    // 8. EDIT TASK
+    function editTask(id) {
+      const task = tasks.find(t => t.id === id);
+
+      if (!task) return;
+
+      editingId = id;
+      taskTitle.value = task.title;
+      taskDescription.value = task.description;
+      taskCategory.value = task.category;
+      taskPriority.value = task.priority;
+      taskDate.value = task.date;
+
+      formHeading.textContent = "✏️ Edit Task";
+      submitBtn.textContent = "Save Changes";
+      cancelBtn.style.display = "block";
+
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    // 9. DELETE TASK
+    function deleteTask(id) {
+      if (!confirm("Are you sure you want to delete this task?")) {
+        return;
+      }
+
+      tasks = tasks.filter(task => task.id !== id);
+
+      if (editingId === id) resetForm();
+
+      saveTasks();
+      renderTasks();
+      showToast("Task deleted.");
+    }
+
+    // 10. MARK TASK COMPLETE OR INCOMPLETE
+    function toggleTask(id) {
+      const task = tasks.find(t => t.id === id);
+
+      if (!task) return;
+
+      task.completed = !task.completed;
+
+      saveTasks();
+      renderTasks();
+
+      showToast(
+        task.completed
+          ? "Great job! Task completed 🎉"
+          : "Task marked as pending."
+      );
+    }
+
+    // 11. CLEAR COMPLETED TASKS
+    document.getElementById("clearCompleted")
+      .addEventListener("click", function() {
+        const completedCount = tasks.filter(t => t.completed).length;
+
+        if (completedCount === 0) {
+          showToast("No completed tasks to clear.");
+          return;
+        }
+
+        if (!confirm("Delete all completed tasks?")) return;
+
+        tasks = tasks.filter(t => !t.completed);
+
+        saveTasks();
+        renderTasks();
+        showToast("Completed tasks cleared.");
+      });
+
+    // 12. SEARCH TASKS
+    searchInput.addEventListener("input", renderTasks);
+
+    // 13. FILTER TASKS
+    document.querySelectorAll(".filter-btn").forEach(button => {
+      button.addEventListener("click", function() {
+        document.querySelectorAll(".filter-btn").forEach(btn => {
+          btn.classList.remove("active");
+        });
+
+        this.classList.add("active");
+        currentFilter = this.dataset.filter;
+
+        renderTasks();
+      });
+    });
+
+    // 14. PREVENT HTML INJECTION IN USER TEXT
+    function escapeHTML(value) {
+      return String(value).replace(/[&<>"']/g, character => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#039;"
+      })[character]);
+    }
+
+    // 15. DISPLAY TASKS
+    function renderTasks() {
+      const today = getToday();
+      const searchText = searchInput.value.toLowerCase().trim();
+
+      let filteredTasks = tasks.filter(task => {
+        const matchesSearch =
+          task.title.toLowerCase().includes(searchText) ||
+          task.description.toLowerCase().includes(searchText) ||
+          task.category.toLowerCase().includes(searchText);
+
+        let matchesFilter = true;
+
+        if (currentFilter === "today") {
+          matchesFilter = task.date === today && !task.completed;
+        } else if (currentFilter === "pending") {
+          matchesFilter = !task.completed;
+        } else if (currentFilter === "completed") {
+          matchesFilter = task.completed;
+        }
+
+        return matchesSearch && matchesFilter;
+      });
+
+      if (filteredTasks.length === 0) {
+        taskList.innerHTML = `
+          <div class="empty-state">
+            <div>🌸</div>
+            <p>No tasks found. Add a new task to get started!</p>
+          </div>
+        `;
+      } else {
+        taskList.innerHTML = filteredTasks.map(task => {
+          const overdue =
+            task.date && task.date < today && !task.completed;
+
+          const dateLabel = task.date
+            ? new Date(task.date + "T00:00:00").toLocaleDateString("en-IN", {
+                day: "numeric",
+                month: "short",
+                year: "numeric"
+              })
+            : "No due date";
+
+          return `
+            <div class="task-card ${task.completed ? "completed" : ""}">
+              <input
+                class="task-check"
+                type="checkbox"
+                ${task.completed ? "checked" : ""}
+                aria-label="Mark task complete"
+                onchange="toggleTask(${task.id})"
+              >
+
+              <div class="task-content">
+                <div class="task-title">${escapeHTML(task.title)}</div>
+
+                ${task.description
+                  ? `<div class="task-description">${escapeHTML(task.description)}</div>`
+                  : ""}
+
+                <div class="task-meta">
+                  <span class="tag">${escapeHTML(task.category)}</span>
+                  <span class="tag priority-${task.priority.toLowerCase()}">
+                    ${escapeHTML(task.priority)} Priority
+                  </span>
+                  <span class="tag ${overdue ? "overdue" : ""}">
+                    ${overdue ? "Overdue: " : "📅 "}${dateLabel}
+                  </span>
+                </div>
+              </div>
+
+              <div class="task-actions">
+                <button class="action-btn"
+                  onclick="editTask(${task.id})"
+                  aria-label="Edit task">✏️</button>
+
+                <button class="action-btn"
+                  onclick="deleteTask(${task.id})"
+                  aria-label="Delete task">🗑️</button>
+              </div>
+            </div>
+          `;
+        }).join("");
+      }
+
+      updateStatistics();
+    }
+
+    // 16. UPDATE DASHBOARD STATISTICS
+    function updateStatistics() {
+      const total = tasks.length;
+      const completed = tasks.filter(t => t.completed).length;
+      const pending = total - completed;
+
+      const todayCount = tasks.filter(t =>
+        t.date === getToday() && !t.completed
+      ).length;
+
+      const percentage = total === 0
+        ? 0
+        : Math.round((completed / total) * 100);
+
+      document.getElementById("totalTasks").textContent = total;
+      document.getElementById("pendingTasks").textContent = pending;
+      document.getElementById("completedTasks").textContent = completed;
+      document.getElementById("todayTasks").textContent = todayCount;
+
+      document.getElementById("progressText").textContent =
+        percentage + "%";
+
+      document.getElementById("progressFill").style.width =
+        percentage + "%";
+    }
+
+    // 17. INITIAL DISPLAY
+    renderTasks();
+  
+  </script>
+</body>
+</html>
